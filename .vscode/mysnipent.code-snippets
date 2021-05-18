@@ -1,0 +1,135 @@
+{
+	// Place your agentsapp workspace snippets here. Each snippet is defined under a snippet name and has a scope, prefix, body and 
+	// description. Add comma separated ids of the languages where the snippet is applicable in the scope field. If scope 
+	// is left empty or omitted, the snippet gets applied to all languages. The prefix is what is 
+	// used to trigger the snippet and the body will be expanded and inserted. Possible variables are: 
+	// $1, $2 for tab stops, $0 for the final cursor position, and ${1:label}, ${2:another} for placeholders. 
+	// Placeholders with the same ids are connected.
+	// Example:
+	// "Print to console": {
+	// 	"scope": "javascript,typescript",
+	// 	"prefix": "log",
+	// 	"body": [
+	// 		"console.log('$1');",
+	// 		"$2"
+	// 	],
+	// 	"description": "Log output to console"
+	// }
+
+	"create crud routes": {
+		"prefix": "routescrud",
+		"body": [
+		  "// $1",
+		  "Route::get('/$1', [$2Controller::class, 'get']);",
+		  "Route::post('/$1', [$2Controller::class, 'create']);",
+		  "Route::post('/$1/{id}', [$2Controller::class, 'update']);"
+		],
+		"description": "create crud routes"
+	  },
+	  "create crud conntroller": {
+		"prefix": "crudController",
+		"body": [
+		  "",
+		  "    public function create(Request $$request){",
+		  "",
+		  "        $$validatedData = $$request->validate([",
+		  "          $1",
+		  "        ]);",
+		  "",
+		  "        $$feildsToFill = [",
+		  "          $2",
+		  "        ];",
+		  "",
+		  "        $$3= $4::create($$feildsToFill);",
+		  "",
+		  "        return $$3;",
+		  "    }",
+		  "",
+		  "    public function update(Request $$request,$$id){",
+		  "",
+		  "        $$validatedData = $$request->validate([",
+		  "          $1",
+		  "        ]);",
+		  "",
+		  "        $$feildsToFill = [",
+		  "           $2",
+		  "        ];",
+		  "",
+		  "        $$3 = $4::find($$id)->update($$feildsToFill);",
+		  "",
+		  "        $$3 = $4::find($$id);",
+		  "",
+		  "        return $$3;",
+		  "    }",
+		  "",
+		  "    public function get(Request $$request){",
+		  "        return $4::paginate(30);",
+		  "    }"
+		],
+		"description": "create crud conntroller"
+	  },
+	  "convertbase64ToImageUrl": {
+		"prefix": "base64toimage",
+		"body": [
+		  "function updateImage_base64($$image){",
+		  "  //upload the product image",
+		  "  $$image = str_replace('data:image/png;base64,', '', $$image);",
+		  "  $$image = str_replace(' ', '+', $$image);",
+		  "  $$imageName = Str::random(10).'.'.'png';",
+		  "  Storage::disk('public')->put($$imageName, base64_decode($$image));",
+		  "  return env(\"APP_URL\", \"somedefaultvalue\").\"/storage/\".$$imageName;",
+		  "  }"
+		],
+		"description": "convertbase64ToImageUrl"
+	  },
+	  "ifimageadd": {
+		"prefix": "ifimageadd",
+		"body": [
+		  "if($$request->has('$1')){",
+		  "  $$feildsToFill['$1'] = $$this->updateImage_base64($$validatedData['$1']); ",
+		  "}"
+		],
+		"description": "ifimageadd"
+	  },
+	  "impstorage": {
+		"prefix": "impstorage",
+		"body": [
+		  "use Illuminate\\Support\\Str;",
+		  "use Illuminate\\Support\\Facades\\Storage;"
+		],
+		"description": "impstorage"
+	  },
+	  "impcontroller": {
+		"prefix": "impcontroller",
+		"body": [
+		  "use App\\Http\\Controllers\\ $1Controller;",
+		  ""
+		],
+		"description": "impcontroller"
+	  },
+	  "impfillable": {
+		"prefix": "impfillable",
+		"body": [
+		  "protected $$fillable = [",
+		  "$1",
+		  "];  "
+		],
+		"description": "impfillable"
+	  },
+	  "impmodel": {
+		"prefix": "impmodel",
+		"body": [
+		  "use App\\Models\\ $1;",
+		  ""
+		],
+		"description": "impmodel"
+	  },
+	  "uploadfile": {
+		"prefix": "uploadfile",
+		"body": [
+		  "$$1= env(\"APP_URL\", \"somedefaultvalue\").\"/storage/\".$$request->file('$2')->store('files');",
+		  ""
+		],
+		"description": "uploadfile"
+	  }
+}
