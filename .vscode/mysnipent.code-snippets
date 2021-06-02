@@ -131,5 +131,14 @@
 		  ""
 		],
 		"description": "uploadfile"
+	  },
+	  "find using id": {
+		"prefix": "findusingid",
+		"body": [
+		  "public function find(Request $$request,$$id){",
+		  "  return $1::find($$id);",
+		  "}"
+		],
+		"description": "find using id"
 	  }
 }

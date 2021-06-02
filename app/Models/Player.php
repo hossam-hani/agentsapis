@@ -4,6 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\Familymember;
+use App\Models\Team;
+use App\Models\Agent;
+use App\Models\Keyperson;
 
 class Player extends Model 
 {
@@ -36,22 +40,22 @@ class Player extends Model
 
     public function team()
     {
-        return $this->hasOne('Teams', 'team_id');
+        return $this->belongsTo(Team::class, 'team_id');
     }
 
     public function family()
     {
-        return $this->hasMany('\Familymembers', 'player_id');
+        return $this->hasMany(Familymember::class, 'player_id');
     }
 
     public function keyPerson()
     {
-        return $this->hasOne('Keyperson', 'key_person_id');
+        return $this->belongsTo(Keyperson::class, 'key_person_id');
     }
 
     public function agent()
     {
-        return $this->hasOne('Agents', 'agent_id');
+        return $this->hasMany(Agent::class);
     }
 
 }

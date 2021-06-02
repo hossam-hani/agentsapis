@@ -64,7 +64,13 @@ Route::post('/links/{id}', [LinksController::class, 'update']);
 //players
 Route::get('/players', [PlayersController::class, 'get']);
 Route::post('/players', [PlayersController::class, 'create']);
+Route::middleware('auth:api')->post('/players/follow', [PlayersController::class, 'follow']);
+
+Route::get('/players/get_by_tag/{tag}', [PlayersController::class, 'getByTag']);
+Route::get('/players/search', [PlayersController::class, 'search']);
+Route::get('/players/{id}', [PlayersController::class, 'find']);
 Route::post('/players/{id}', [PlayersController::class, 'update']);
+
 
 // posts
 Route::get('/posts', [PostsController::class, 'get']);
@@ -72,6 +78,7 @@ Route::post('/posts', [PostsController::class, 'create']);
 Route::post('/posts/{id}', [PostsController::class, 'update']);
 
 //users
+Route::middleware('auth:api')->get('/users/followers', [UsersController::class, 'getFollowers']);
 Route::post('/users/login', [UsersController::class, 'login']);
 Route::post('/users/register', [UsersController::class, 'register']);
 Route::middleware('auth:api')->get('/users/notifications', [UsersController::class, 'get_notifications']);

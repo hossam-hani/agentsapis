@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Follower;
 use App\Models\Notification;
 use App\Models\NotifcationToken;
 use Illuminate\Support\Facades\Auth;
@@ -17,6 +18,12 @@ class UsersController extends Controller
     public function get_notifications(Request $request){
         $user = Auth::user();
         return Notification::where('user_id',$user->id)->paginate(30);
+    }
+
+    public function getFollowers(Request $request){
+        $user = Auth::user();
+
+        return Follower::where('user_id',$user->id)->get();
     }
   
     public function save_notification_token(Request $request){

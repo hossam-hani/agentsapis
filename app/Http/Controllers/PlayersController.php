@@ -4,9 +4,14 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Player;
-
+use App\Models\Follower;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+
+use App\Http\Resources\PlayerResource;
+
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class PlayersController extends Controller
 {
@@ -40,6 +45,8 @@ class PlayersController extends Controller
                 'key_person_id' => ['required'],
                 'agent_id' => ['required'],
             ]);
+
+            $validatedData = $request;
             
             $feildsToFill = [
                 'name' => $validatedData['name'],
@@ -55,10 +62,10 @@ class PlayersController extends Controller
                 'agent_id' => $validatedData['agent_id'],
             ];
 
-            $feildsToFill['dna_mini_link'] = env("APP_URL", "somedefaultvalue")."/storage/".$request->file('dna_mini')->store('files');
-            $feildsToFill['dna_full_link'] = env("APP_URL", "somedefaultvalue")."/storage/".$request->file('dna_full')->store('files');
-            $feildsToFill['mbti_full_link'] = env("APP_URL", "somedefaultvalue")."/storage/".$request->file('mbti_full')->store('files');
-            $feildsToFill['mbti_mini_link'] = env("APP_URL", "somedefaultvalue")."/storage/".$request->file('mbti_mini')->store('files');
+            $feildsToFill['dna_mini_link'] = env("APP_URL", "somedefaultvalue")."/storage/".$request->file('dna_mini')->store('public');
+            $feildsToFill['dna_full_link'] = env("APP_URL", "somedefaultvalue")."/storage/".$request->file('dna_full')->store('public');
+            $feildsToFill['mbti_full_link'] = env("APP_URL", "somedefaultvalue")."/storage/".$request->file('mbti_full')->store('public');
+            $feildsToFill['mbti_mini_link'] = env("APP_URL", "somedefaultvalue")."/storage/".$request->file('mbti_mini')->store('public');
 
             if($request->has('image')){
               $feildsToFill['image'] = $this->updateImage_base64($validatedData['image']); 
@@ -68,27 +75,51 @@ class PlayersController extends Controller
     
             return $player;
         }
+
+        
+
+        public function follow(Request $request){
+          $user = Auth::user();
+
+          $validatedData = $request->validate([
+              'player_id' => ['required'],
+          ]);
+
+          $followQuery = Follower::where('player_id',$validatedData['player_id'])->where('user_id',$user->id);
+
+          if($followQuery->count() > 0){
+            $followId = $followQuery->delete();
+          }else{
+            return Follower::create([
+              'player_id' => $validatedData['player_id'],
+              'user_id' => $user->id,
+            ]);
+          }
+
+        }
     
         public function update(Request $request,$id){
     
-            $validatedData = $request->validate([
-                'name' => ['required'],
-                'address' => ['required'],
-                'phone_number' => ['required'],
-                'image' => '',
-                'notes' => ['required'],
-                'position' => ['required'], // custome value
-                'birth_date' => ['required'], // date
-                'nationality' => ['required'],
-                'mbti_mini' => '', // file
-                'mbti_full' => '', // file
-                'dna_mini' => '', // file
-                'dna_full' => '', // file
-                'tag' => ['required'], // custome value
-                'team_id' => ['required'],
-                'key_person_id' => ['required'],
-                'agent_id' => ['required'],
-            ]);
+            // $validatedData = $request->validate([
+            //     'name' => ['required'],
+            //     'address' => ['required'],
+            //     'phone_number' => ['required'],
+            //     'image' => '',
+            //     'notes' => ['required'],
+            //     'position' => ['required'], // custome value
+            //     'birth_date' => ['required'], // date
+            //     'nationality' => ['required'],
+            //     'mbti_mini' => '', // file
+            //     'mbti_full' => '', // file
+            //     'dna_mini' => '', // file
+            //     'dna_full' => '', // file
+            //     'tag' => ['required'], // custome value
+            //     'team_id' => ['required'],
+            //     'key_person_id' => ['required'],
+            //     'agent_id' => ['required'],
+            // ]);
+
+            $validatedData = $request;
     
             $feildsToFill = [
                 'name' => $validatedData['name'],
@@ -132,6 +163,24 @@ class PlayersController extends Controller
         }
     
         public function get(Request $request){
-            return Player::paginate(30);
+            return PlayerResource::collection(Player::paginate(30));
+        }
+
+        public function find(Request $request,$id){
+          return new PlayerResource(Player::find($id));
+        }
+
+        public function search(Request $request){
+
+          // return $request->input('position');
+
+          // return $request->input('keyword');
+
+          return PlayerResource::collection(Player::all());
+        }
+
+
+        public function getByTag(Request $request,$tag){
+          return PlayerResource::collection(Player::where('tag',$tag)->get());
         }
 }

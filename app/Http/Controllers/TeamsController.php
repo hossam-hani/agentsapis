@@ -5,17 +5,20 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Team;
 
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
+
 class TeamsController extends Controller
 {
 
-    function updateImage_base64(image){
-        //upload the product image
-        image = str_replace('data:image/png;base64,', '', image);
-        image = str_replace(' ', '+', image);
-        imageName = Str::random(10).'.'.'png';
-        Storage::disk('public')->put(imageName, base64_decode(image));
-        return env("APP_URL", "somedefaultvalue")."/storage/".imageName;
-    }
+    function updateImage_base64($image){
+      //upload the product image
+      $image = str_replace('data:image/png;base64,', '', $image);
+      $image = str_replace(' ', '+', $image);
+      $imageName = Str::random(10).'.'.'png';
+      Storage::disk('public')->put($imageName, base64_decode($image));
+      return env("APP_URL", "somedefaultvalue")."/storage/".$imageName;
+      }
 
 
     public function create(Request $request){
@@ -30,8 +33,8 @@ class TeamsController extends Controller
             'name' => $validatedData['name'],
         ];
 
-        if(isset(validateData["logo"])){
-            feildsToFill['logo'] = updateImage_base64(validatedData['logo']); 
+        if($request->has('logo')){
+          $feildsToFill['logo'] = $this->updateImage_base64($validatedData['logo']); 
         }
 
         $team = Team::create($feildsToFill);
@@ -43,16 +46,16 @@ class TeamsController extends Controller
 
         $validatedData = $request->validate([
             'name' => ['required'],
-            'logo' => ['required']
+            'logo' => ''
         ]);
 
         $feildsToFill = [
             'name' => $validatedData['name'],
         ];
 
-        if(isset(validateData["logo"])){
-            feildsToFill['logo'] = updateImage_base64(validatedData['logo']); 
-        }
+        if($request->has('logo')){
+            $feildsToFill['logo'] = $this->updateImage_base64($validatedData['logo']); 
+          }
 
         $team = Team::find($id)->update($feildsToFill);
         

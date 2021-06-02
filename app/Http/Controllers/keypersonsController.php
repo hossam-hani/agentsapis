@@ -33,6 +33,9 @@ class keypersonsController extends Controller
               'image' => '',
             ]);
 
+            $validatedData = $request;
+
+
     
             $feildsToFill = [
               'name' => $validatedData['name'],
@@ -54,6 +57,7 @@ class keypersonsController extends Controller
         }
     
         public function update(Request $request,$id){
+            
     
             $validatedData = $request->validate([
                 'name' => 'required',
@@ -65,6 +69,7 @@ class keypersonsController extends Controller
                 'connections' => 'required', 
                 'image' => '',              
             ]);
+
     
             $feildsToFill = [
                 'name' => $validatedData['name'],
@@ -88,6 +93,6 @@ class keypersonsController extends Controller
         }
     
         public function get(Request $request){
-            return Keyperson::paginate(30);
+            return Keyperson::paginate(3);
         }   
 }
